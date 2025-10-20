@@ -1,103 +1,159 @@
-import Image from "next/image"
+"use client"
 
-export default function Home() {
+import { Button } from "@/components/ui/button"
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog"
+import {
+  Field,
+  FieldError,
+  FieldGroup,
+  FieldLabel,
+} from "@/components/ui/field"
+import { Input } from "@/components/ui/input"
+import { useForm } from "@tanstack/react-form"
+import { GalleryVerticalEnd } from "lucide-react"
+import * as z from "zod"
+
+const formSchema = z.object({
+  email: z.email({ message: "Please enter a valid email address." }),
+})
+
+export default function Component() {
+  const form = useForm({
+    defaultValues: {
+      email: "",
+    },
+    validators: {
+      onSubmit: formSchema,
+      onChange: formSchema,
+      onBlur: formSchema,
+    },
+    onSubmit: async ({ value }) => {
+      console.log(value)
+      form.reset()
+    },
+  })
+
   return (
-    <div className="grid min-h-screen grid-rows-[20px_1fr_20px] items-center justify-items-center gap-16 p-8 pb-20 font-sans sm:p-20">
-      <main className="row-start-2 flex flex-col items-center gap-[32px] sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
-        />
-        <ol className="list-inside list-decimal text-center font-mono text-sm/6 sm:text-left">
-          <li className="mb-2 tracking-[-.01em]">
-            Get started by editing{" "}
-            <code className="rounded bg-black/[.05] px-1 py-0.5 font-mono font-semibold dark:bg-white/[.06]">
-              src/app/page.tsx
-            </code>
-            .
-          </li>
-          <li className="tracking-[-.01em]">
-            Save and see your changes instantly.
-          </li>
-        </ol>
-
-        <div className="flex flex-col items-center gap-4 sm:flex-row">
-          <a
-            className="bg-foreground text-background flex h-10 items-center justify-center gap-2 rounded-full border border-solid border-transparent px-4 text-sm font-medium transition-colors hover:bg-[#383838] sm:h-12 sm:w-auto sm:px-5 sm:text-base dark:hover:bg-[#ccc]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
+    <Dialog>
+      <DialogTrigger asChild>
+        <Button className="w-24 cursor-pointer" size="sm" variant="outline">
+          Login
+        </Button>
+      </DialogTrigger>
+      <DialogContent
+        className="max-w-md sm:max-w-md"
+        tabIndex={-1}
+        onOpenAutoFocus={(event) => {
+          event.preventDefault()
+        }}
+      >
+        <DialogHeader className="sr-only">
+          <DialogTitle className="text-center">Sign in/up</DialogTitle>
+        </DialogHeader>
+        <div className="flex flex-col gap-6">
+          <div className="flex flex-col items-center gap-2">
+            <div className="flex flex-col items-center gap-2 font-medium">
+              <div className="flex size-8 items-center justify-center rounded-md">
+                <GalleryVerticalEnd className="size-6" />
+              </div>
+              <span className="sr-only">ACME Inc.</span>
+            </div>
+            <h1 className="text-xl font-semibold">Welcome to ACME Inc.</h1>
+          </div>
+          <form
+            id="email"
+            className="space-y-4"
+            onSubmit={(e) => {
+              e.preventDefault()
+              form.handleSubmit()
+            }}
           >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
-            />
-            Deploy now
-          </a>
-          <a
-            className="flex h-10 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-4 text-sm font-medium transition-colors hover:border-transparent hover:bg-[#f2f2f2] sm:h-12 sm:w-auto sm:px-5 sm:text-base md:w-[158px] dark:border-white/[.145] dark:hover:bg-[#1a1a1a]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Read our docs
-          </a>
+            {/* Email w/o unique errors */}
+            <FieldGroup>
+              <form.Field name="email">
+                {(field) => {
+                  const isInvalid =
+                    field.state.meta.isTouched && !field.state.meta.isValid
+                  return (
+                    <Field data-invalid={isInvalid}>
+                      <FieldLabel htmlFor={field.name}>
+                        Email w/o unique errors
+                      </FieldLabel>
+                      <Input
+                        id={field.name}
+                        type="email"
+                        name={field.name}
+                        className="focus:placeholder:opacity-0"
+                        value={field.state.value}
+                        onBlur={field.handleBlur}
+                        onChange={(e) => field.handleChange(e.target.value)}
+                        aria-invalid={isInvalid}
+                        placeholder="admin@nrjdalal.com"
+                      />
+                      {isInvalid && (
+                        <FieldError errors={field.state.meta.errors} />
+                      )}
+                    </Field>
+                  )
+                }}
+              </form.Field>
+            </FieldGroup>
+            {/* Email with unique errors */}
+            <FieldGroup>
+              <form.Field name="email">
+                {(field) => {
+                  const isInvalid =
+                    field.state.meta.isTouched && !field.state.meta.isValid
+                  return (
+                    <Field data-invalid={isInvalid}>
+                      <FieldLabel htmlFor={field.name}>
+                        Email with unique errors
+                      </FieldLabel>
+                      <Input
+                        id={field.name}
+                        type="email"
+                        name={field.name}
+                        className="focus:placeholder:opacity-0"
+                        value={field.state.value}
+                        onBlur={field.handleBlur}
+                        onChange={(e) => field.handleChange(e.target.value)}
+                        aria-invalid={isInvalid}
+                        placeholder="admin@nrjdalal.com"
+                      />
+                      {isInvalid && (
+                        <FieldError
+                          errors={[
+                            ...new Map(
+                              field.state.meta.errors.map((error) => [
+                                error?.message,
+                                error,
+                              ]),
+                            ).values(),
+                          ]}
+                        />
+                      )}
+                    </Field>
+                  )
+                }}
+              </form.Field>
+            </FieldGroup>
+            <Button
+              form="email"
+              type="submit"
+              variant="secondary"
+              className="w-full cursor-pointer"
+            >
+              Sign in/up
+            </Button>
+          </form>
         </div>
-      </main>
-      <footer className="row-start-3 flex flex-wrap items-center justify-center gap-[24px]">
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
-          />
-          Learn
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
-          />
-          Examples
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to nextjs.org →
-        </a>
-      </footer>
-    </div>
+      </DialogContent>
+    </Dialog>
   )
 }
