@@ -89,7 +89,6 @@ export default function Component() {
                         id={field.name}
                         type="email"
                         name={field.name}
-                        className="focus:placeholder:opacity-0"
                         value={field.state.value}
                         onBlur={field.handleBlur}
                         onChange={(e) => field.handleChange(e.target.value)}
@@ -119,7 +118,6 @@ export default function Component() {
                         id={field.name}
                         type="email"
                         name={field.name}
-                        className="focus:placeholder:opacity-0"
                         value={field.state.value}
                         onBlur={field.handleBlur}
                         onChange={(e) => field.handleChange(e.target.value)}
